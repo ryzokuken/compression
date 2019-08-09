@@ -1,0 +1,8 @@
+[package]
+name = "compression"
+version = "0.1.0"
+authors = ["Ujjwal Sharma <usharma1998@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+bitvec = "0.14"
