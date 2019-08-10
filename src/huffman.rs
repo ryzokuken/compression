@@ -1,5 +1,7 @@
 use crate::tree::Tree;
 use bitvec::prelude::*;
+use std::cmp::Reverse;
+use std::collections::BinaryHeap;
 use std::collections::HashMap;
 
 pub fn huffman(text: &str) -> BitVec {
@@ -43,18 +45,19 @@ fn construct_tree(freq: HashMap<char, u32>) -> Tree {
     if freq.len() <= 0 {
         return Tree::blank();
     }
-    let mut tree_vec = Vec::new();
+    let mut heap = BinaryHeap::new();
     for (ch, f) in freq.iter() {
-        tree_vec.push((Tree::new(*ch), *f))
+        heap.push(Reverse((*f, Tree::new(*ch))));
     }
-    while tree_vec.len() > 1 {
-        tree_vec.sort_by(|a, b| b.1.cmp(&a.1));
-        let first = tree_vec.pop().unwrap();
-        let second = tree_vec.pop().unwrap();
-        let merged = Tree::blank().set_left(first.0).set_right(second.0);
-        tree_vec.push((merged, first.1 + second.1));
+    while heap.len() > 1 {
+        let first = heap.pop().unwrap().0;
+        let second = heap.pop().unwrap().0;
+        heap.push(Reverse((
+            first.0 + second.0,
+            Tree::blank().set_left(first.1).set_right(second.1),
+        )));
     }
-    tree_vec.pop().unwrap().0
+    (heap.pop().unwrap().0).1
 }
 
 fn analyze_frequency(text: &str) -> HashMap<char, u32> {

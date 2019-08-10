@@ -1,3 +1,5 @@
+use std::cmp::Ordering;
+
 #[derive(Default, Debug)]
 pub struct Tree {
     pub data: Option<char>,
@@ -37,6 +39,18 @@ impl PartialEq for Tree {
 }
 
 impl Eq for Tree {}
+
+impl PartialOrd for Tree {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for Tree {
+    fn cmp(&self, _other: &Self) -> Ordering {
+        Ordering::Equal
+    }
+}
 
 #[cfg(test)]
 mod tests {
