@@ -1,10 +1,10 @@
 mod tree;
 
-use tree::Tree;
 use bitvec::prelude::*;
 use std::cmp::Reverse;
 use std::collections::BinaryHeap;
 use std::collections::HashMap;
+use tree::Tree;
 
 pub fn huffman(text: &str) -> Vec<u8> {
     let freq = analyze_frequency(text);
@@ -68,4 +68,14 @@ fn analyze_frequency(text: &str) -> HashMap<char, u32> {
         *freq.entry(ch).or_insert(0) += 1;
     }
     freq
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn basic() {
+        let string = "aaaabbbccd";
+        let out = &[0x0Au8, 0xBFu8, 0xC0u8];
+        assert_eq!(super::huffman(string).as_slice(), out);
+    }
 }
