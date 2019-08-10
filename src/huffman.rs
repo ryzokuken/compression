@@ -1,10 +1,6 @@
-extern crate bitvec;
-
 use std::collections::HashMap;
-
 use bitvec::prelude::*;
-
-use super::tree::Tree;
+use crate::tree::Tree;
 
 pub fn huffman(text: &str) -> BitVec {
     let freq = analyze_frequency(text);
