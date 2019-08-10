@@ -1,4 +1,6 @@
-use crate::tree::Tree;
+mod tree;
+
+use tree::Tree;
 use bitvec::prelude::*;
 use std::cmp::Reverse;
 use std::collections::BinaryHeap;
