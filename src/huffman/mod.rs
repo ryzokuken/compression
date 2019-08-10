@@ -6,28 +6,63 @@ use std::collections::BinaryHeap;
 use std::collections::HashMap;
 use tree::Tree;
 
-pub fn encode(data: &[u8]) -> Vec<u8> {
-    let sequence = preprocess(data);
-    let mut bit_vec: BitVec = BitVec::new();
+const EOF: u8 = 255;
+
+pub fn encode(data: &[u8]) -> (Vec<u8>, Tree) {
+    let data = delimit(data);
+    let freq = analyze_frequency(data.as_slice());
+    let tree = construct_tree(freq);
+    let sequences = construct_sequences(&tree);
+    let mut bv: BitVec = BitVec::new();
     for x in data.iter() {
-        bit_vec.extend(&sequence[&x])
+        bv.extend(&sequences[&x])
     }
-    bit_vec.into_vec()
+    (bv.into_vec(), tree)
 }
 
-// pub fn decode(text: &[u8]) -> Vec<u8> {
-//     let sequence = preprocess(data);
-// }
+pub fn decode(data: &[u8], tree: &Tree) -> Vec<u8> {
+    let sequences = construct_sequences(&tree);
+    let mut rev_sequences = HashMap::with_capacity(sequences.len());
+    for (byte, bv) in sequences.iter() {
+        rev_sequences.insert(bv, byte);
+    }
 
-fn preprocess(data: &[u8]) -> HashMap<u8, BitVec> {
-    construct_sequences(construct_tree(analyze_frequency(data)))
+    let mut output = Vec::new();
+    let data: &BitSlice = BitSlice::from_slice(data);
+    let mut idx = 0;
+    'outer: while idx < data.len() {
+        let mut offset = 0;
+        'inner: loop {
+            let sub = &data[idx..idx + offset];
+            match rev_sequences.get(&BitVec::from(sub)) {
+                Some(byte) => match **byte {
+                    EOF => break 'outer,
+                    _ => {
+                        output.push(**byte);
+                        idx += offset;
+                        break 'inner;
+                    }
+                },
+                None => {
+                    offset += 1;
+                }
+            };
+        }
+    }
+    output
 }
 
-fn construct_sequences(tree: Tree) -> HashMap<u8, BitVec> {
+fn delimit(data: &[u8]) -> Vec<u8> {
+    let mut v = Vec::from(data);
+    v.push(EOF);
+    v
+}
+
+fn construct_sequences(tree: &Tree) -> HashMap<u8, BitVec> {
     traverse_tree(tree, BitVec::new())
 }
 
-fn traverse_tree(tree: Tree, vec: BitVec) -> HashMap<u8, BitVec> {
+fn traverse_tree(tree: &Tree, vec: BitVec) -> HashMap<u8, BitVec> {
     match tree.data {
         Some(byte) => {
             let mut map = HashMap::with_capacity(1);
@@ -39,8 +74,8 @@ fn traverse_tree(tree: Tree, vec: BitVec) -> HashMap<u8, BitVec> {
             left_vec.push(false);
             let mut right_vec = vec.clone();
             right_vec.push(true);
-            let left_map = traverse_tree(*tree.left.unwrap(), left_vec);
-            let right_map = traverse_tree(*tree.right.unwrap(), right_vec);
+            let left_map = traverse_tree(tree.left.as_ref().unwrap(), left_vec);
+            let right_map = traverse_tree(tree.right.as_ref().unwrap(), right_vec);
             let mut map = HashMap::with_capacity(left_map.len() + right_map.len());
             map.extend(left_map);
             map.extend(right_map);
@@ -80,8 +115,8 @@ fn analyze_frequency(text: &[u8]) -> HashMap<u8, u32> {
 mod tests {
     #[test]
     fn basic() {
-        let string = "aaaabbbccd";
-        let out = &[0x0Au8, 0xBFu8, 0xC0u8];
-        assert_eq!(super::encode(string.as_bytes()).as_slice(), out);
+        let string = "aaaabbbccd".as_bytes();
+        let (compressed, tree) = super::encode(string);
+        assert_eq!(super::decode(compressed.as_slice(), &tree), string);
     }
 }

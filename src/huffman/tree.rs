@@ -57,9 +57,7 @@ mod tests {
     #[test]
     fn test() {
         use super::Tree;
-        let tree = Tree::new(1)
-            .set_left(Tree::new(2))
-            .set_right(Tree::new(3));
+        let tree = Tree::new(1).set_left(Tree::new(2)).set_right(Tree::new(3));
         assert_eq!(tree.data, Some(1));
         assert_eq!(tree.left.unwrap().data, Some(2));
         assert_eq!(tree.right.unwrap().data, Some(3));
