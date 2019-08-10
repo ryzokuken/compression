@@ -35,3 +35,15 @@ impl PartialEq for Tree {
 }
 
 impl Eq for Tree {}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test() {
+        use super::Tree;
+        let tree = Tree::new('a').set_left(Tree::new('b')).set_right(Tree::new('c'));
+        assert_eq!(tree.data, Some('a'));
+        assert_eq!(tree.left.unwrap().data, Some('b'));
+        assert_eq!(tree.right.unwrap().data, Some('c'));
+    }
+}
