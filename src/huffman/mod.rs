@@ -6,7 +6,7 @@ use std::cmp::Reverse;
 use std::collections::BinaryHeap;
 use std::collections::HashMap;
 
-pub fn huffman(text: &str) -> BitVec {
+pub fn huffman(text: &str) -> Vec<u8> {
     let freq = analyze_frequency(text);
     let tree = construct_tree(freq);
     let sequence = construct_sequence(tree);
@@ -14,7 +14,7 @@ pub fn huffman(text: &str) -> BitVec {
     for x in text.chars() {
         bit_vec.extend(&sequence[&x])
     }
-    bit_vec
+    bit_vec.into_vec()
 }
 
 fn construct_sequence(tree: Tree) -> HashMap<char, BitVec> {
