@@ -6,3 +6,10 @@ edition = "2018"
 
 [dependencies]
 bitvec = "0.14"
+
+[dev-dependencies]
+criterion = "0.2"
+
+[[bench]]
+name = "huffman"
+harness = false
