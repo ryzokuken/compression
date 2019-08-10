@@ -1,4 +1,4 @@
-#[derive(Default,Debug)]
+#[derive(Default, Debug)]
 pub struct Tree {
     pub data: Option<char>,
     pub left: Option<Box<Tree>>,
@@ -7,7 +7,9 @@ pub struct Tree {
 
 impl Tree {
     pub fn blank() -> Tree {
-        Tree { ..Default::default()}
+        Tree {
+            ..Default::default()
+        }
     }
 
     pub fn new(data: char) -> Tree {
@@ -41,7 +43,9 @@ mod tests {
     #[test]
     fn test() {
         use super::Tree;
-        let tree = Tree::new('a').set_left(Tree::new('b')).set_right(Tree::new('c'));
+        let tree = Tree::new('a')
+            .set_left(Tree::new('b'))
+            .set_right(Tree::new('c'));
         assert_eq!(tree.data, Some('a'));
         assert_eq!(tree.left.unwrap().data, Some('b'));
         assert_eq!(tree.right.unwrap().data, Some('c'));

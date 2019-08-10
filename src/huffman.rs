@@ -1,15 +1,15 @@
-use std::collections::HashMap;
-use bitvec::prelude::*;
 use crate::tree::Tree;
+use bitvec::prelude::*;
+use std::collections::HashMap;
 
 pub fn huffman(text: &str) -> BitVec {
     let freq = analyze_frequency(text);
     let tree = construct_tree(freq);
     let sequence = construct_sequence(tree);
-    let mut bit_vec : BitVec = BitVec::new();
+    let mut bit_vec: BitVec = BitVec::new();
     for x in text.chars() {
         bit_vec.extend(&sequence[&x])
-    };
+    }
     bit_vec
 }
 
@@ -23,7 +23,7 @@ fn traverse_tree(tree: Tree, vec: BitVec) -> HashMap<char, BitVec> {
             let mut map = HashMap::with_capacity(1);
             map.insert(ch, vec);
             map
-        },
+        }
         None => {
             let mut left_vec = vec.clone();
             left_vec.push(false);
