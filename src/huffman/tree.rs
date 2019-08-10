@@ -2,7 +2,7 @@ use std::cmp::Ordering;
 
 #[derive(Default, Debug)]
 pub struct Tree {
-    pub data: Option<char>,
+    pub data: Option<u8>,
     pub left: Option<Box<Tree>>,
     pub right: Option<Box<Tree>>,
 }
@@ -14,7 +14,7 @@ impl Tree {
         }
     }
 
-    pub fn new(data: char) -> Tree {
+    pub fn new(data: u8) -> Tree {
         Tree {
             data: Some(data),
             ..Default::default()
@@ -57,11 +57,11 @@ mod tests {
     #[test]
     fn test() {
         use super::Tree;
-        let tree = Tree::new('a')
-            .set_left(Tree::new('b'))
-            .set_right(Tree::new('c'));
-        assert_eq!(tree.data, Some('a'));
-        assert_eq!(tree.left.unwrap().data, Some('b'));
-        assert_eq!(tree.right.unwrap().data, Some('c'));
+        let tree = Tree::new(1)
+            .set_left(Tree::new(2))
+            .set_right(Tree::new(3));
+        assert_eq!(tree.data, Some(1));
+        assert_eq!(tree.left.unwrap().data, Some(2));
+        assert_eq!(tree.right.unwrap().data, Some(3));
     }
 }
