@@ -14,6 +14,14 @@ impl Node {
         out
     }
 
+    fn deserialize(bytes: &[u8; 17]) -> Node {
+        Node {
+            offset: usize::from_be_bytes(from_slice(&bytes[0..8])),
+            length: usize::from_be_bytes(from_slice(&bytes[8..16])),
+            symbol: bytes[16],
+        }
+    }
+
     fn blank(symbol: u8) -> Node {
         Node {
             offset: 0,
@@ -29,6 +37,12 @@ impl Node {
             symbol: 0u8,
         }
     }
+}
+
+fn from_slice(bytes: &[u8]) -> [u8; 8] {
+    let mut arr = [0; 8];
+    arr.copy_from_slice(&bytes[..]);
+    arr
 }
 
 fn serialize_nodes(nodes: &[Node]) -> Vec<u8> {
