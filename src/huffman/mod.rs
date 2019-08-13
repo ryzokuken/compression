@@ -85,7 +85,7 @@ fn traverse_tree(tree: &Tree, vec: BitVec) -> HashMap<u8, BitVec> {
 }
 
 fn construct_tree(freq: HashMap<u8, u32>) -> Tree {
-    if freq.len() <= 0 {
+    if freq.is_empty() {
         return Tree::blank();
     }
     let mut heap = BinaryHeap::new();
