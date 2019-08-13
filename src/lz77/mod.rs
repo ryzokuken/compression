@@ -14,7 +14,7 @@ impl Node {
         out
     }
 
-    fn deserialize(bytes: &[u8; 17]) -> Node {
+    fn deserialize(bytes: &[u8]) -> Node {
         Node {
             offset: usize::from_be_bytes(from_slice(&bytes[0..8])),
             length: usize::from_be_bytes(from_slice(&bytes[8..16])),
@@ -43,6 +43,15 @@ fn from_slice(bytes: &[u8]) -> [u8; 8] {
     let mut arr = [0; 8];
     arr.copy_from_slice(&bytes[..]);
     arr
+}
+
+fn deserialize_nodes(data: &[u8]) -> Vec<Node> {
+    let mut nodes = Vec::new();
+    for block in data.chunks(17) {
+        println!("{:?}", block);
+        nodes.push(Node::deserialize(block));
+    }
+    nodes
 }
 
 fn serialize_nodes(nodes: &[Node]) -> Vec<u8> {
@@ -89,7 +98,7 @@ pub fn encode(data: &[u8]) -> Vec<u8> {
 mod tests {
     #[test]
     fn basic() {
-        let string = "abcabdca".as_bytes();
+        let string = b"abcabdca";
         let _compressed = super::encode(string);
         println!("{:?}", _compressed)
     }
